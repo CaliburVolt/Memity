@@ -379,25 +379,25 @@ export default function Editor() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <header className="bg-black/30 backdrop-blur-md border-b border-white/10 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link href="/" className="flex items-center space-x-2 text-blue-600 hover:text-blue-700">
+            <Link href="/" className="flex items-center space-x-2 text-cyan-400 hover:text-cyan-300 transition-colors">
               <Home className="h-6 w-6" />
               <span className="hidden sm:inline">Back to Home</span>
             </Link>
             <div className="flex items-center space-x-2">
-              <Palette className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">ImageCraft Editor</h1>
+              <Palette className="h-8 w-8 text-cyan-400" />
+              <h1 className="text-2xl font-bold text-white">Memity - Meme Editor</h1>
             </div>
           </div>
           
           <div className="flex items-center space-x-4">
             <button
               onClick={clearCanvas}
-              className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
             >
               <RotateCcw className="h-4 w-4" />
               <span className="hidden sm:inline">Clear</span>
@@ -405,7 +405,7 @@ export default function Editor() {
             <button
               onClick={downloadImage}
               disabled={!uploadedImage}
-              className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-cyan-600 hover:to-blue-600 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed transition-all"
             >
               <Download className="h-4 w-4" />
               Download
@@ -419,9 +419,9 @@ export default function Editor() {
           {/* Sidebar Controls */}
           <div className="lg:col-span-1 space-y-6">
             {/* Upload Section */}
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <Upload className="h-5 w-5 mr-2 text-blue-600" />
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
+              <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
+                <Upload className="h-5 w-5 mr-2 text-cyan-400" />
                 Upload Image
               </h3>
               <div className="space-y-4">
@@ -432,9 +432,9 @@ export default function Editor() {
                     onChange={handleImageUpload}
                     className="hidden"
                   />
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors">
-                    <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-600">
+                  <div className="border-2 border-dashed border-cyan-400/30 rounded-lg p-8 text-center cursor-pointer hover:border-cyan-400/60 hover:bg-cyan-400/5 transition-colors">
+                    <Upload className="h-8 w-8 text-cyan-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-300">
                       Click to upload or drag and drop
                     </p>
                   </div>
@@ -443,48 +443,42 @@ export default function Editor() {
             </div>
 
             {/* Text Controls */}
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <Type className="h-5 w-5 mr-2 text-purple-600" />
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
+              <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
+                <Type className="h-5 w-5 mr-2 text-purple-400" />
                 Text Settings
               </h3>
               
               {selectedTextId && (
-                <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                  <p className="text-sm text-green-700 flex items-center">
+                <div className="mb-4 p-3 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
+                  <p className="text-sm text-emerald-300 flex items-center">
                     <Move className="h-4 w-4 mr-2" />
                     Text selected! Changes apply automatically as you edit.
                   </p>
                 </div>
               )}
               
-              <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-700">
-                  ✨ <strong>Auto-Update:</strong> Changes apply instantly to selected text. No need to click update!
-                </p>
-              </div>
-              
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Text Content
                   </label>
                   <input
                     type="text"
                     value={textSettings.text}
                     onChange={(e) => setTextSettings({...textSettings, text: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 text-white placeholder-gray-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Font Family
                   </label>
                   <select
                     value={textSettings.fontFamily}
                     onChange={(e) => setTextSettings({...textSettings, fontFamily: e.target.value})}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 text-white"
                   >
                     <option value="Arial">Arial</option>
                     <option value="Helvetica">Helvetica</option>
@@ -497,7 +491,7 @@ export default function Editor() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Font Size: {textSettings.fontSize}px
                   </label>
                   <input
@@ -506,24 +500,24 @@ export default function Editor() {
                     max="100"
                     value={textSettings.fontSize}
                     onChange={(e) => setTextSettings({...textSettings, fontSize: parseInt(e.target.value)})}
-                    className="w-full"
+                    className="w-full accent-cyan-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Color
                   </label>
                   <input
                     type="color"
                     value={textSettings.color}
                     onChange={(e) => setTextSettings({...textSettings, color: e.target.value})}
-                    className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
+                    className="w-full h-10 border border-gray-600 rounded-md cursor-pointer bg-gray-700"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Style
                   </label>
                   <div className="flex space-x-2">
@@ -531,8 +525,8 @@ export default function Editor() {
                       onClick={() => setTextSettings({...textSettings, bold: !textSettings.bold})}
                       className={`flex-1 flex items-center justify-center px-3 py-2 rounded-md border transition-colors ${
                         textSettings.bold 
-                          ? "bg-blue-100 border-blue-300 text-blue-700" 
-                          : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                          ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-300" 
+                          : "bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-600/50"
                       }`}
                     >
                       <Bold className="h-4 w-4" />
@@ -541,8 +535,8 @@ export default function Editor() {
                       onClick={() => setTextSettings({...textSettings, italic: !textSettings.italic})}
                       className={`flex-1 flex items-center justify-center px-3 py-2 rounded-md border transition-colors ${
                         textSettings.italic 
-                          ? "bg-blue-100 border-blue-300 text-blue-700" 
-                          : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                          ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-300" 
+                          : "bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-600/50"
                       }`}
                     >
                       <Italic className="h-4 w-4" />
@@ -551,7 +545,7 @@ export default function Editor() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Alignment
                   </label>
                   <div className="flex space-x-1">
@@ -561,8 +555,8 @@ export default function Editor() {
                         onClick={() => setTextSettings({...textSettings, alignment: align})}
                         className={`flex-1 flex items-center justify-center px-3 py-2 rounded-md border transition-colors ${
                           textSettings.alignment === align
-                            ? "bg-blue-100 border-blue-300 text-blue-700"
-                            : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                            ? "bg-cyan-500/20 border-cyan-500/50 text-cyan-300"
+                            : "bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-600/50"
                         }`}
                       >
                         {align === "left" && <AlignLeft className="h-4 w-4" />}
@@ -575,14 +569,14 @@ export default function Editor() {
 
                 <button
                   onClick={addText}
-                  className="w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors mb-4"
+                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-md hover:from-purple-600 hover:to-pink-600 transition-all mb-4"
                 >
                   Add Text
                 </button>
 
                 <button
                   onClick={deleteSelected}
-                  className="w-full flex items-center justify-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+                  className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-md hover:from-red-600 hover:to-red-700 transition-all"
                 >
                   <Trash2 className="h-4 w-4" />
                   <span>Delete Selected</span>
@@ -593,13 +587,13 @@ export default function Editor() {
 
           {/* Canvas Area */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <Move className="h-5 w-5 mr-2 text-green-600" />
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
+              <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
+                <Move className="h-5 w-5 mr-2 text-emerald-400" />
                 Canvas
               </h3>
               <div className="flex justify-center">
-                <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg">
+                <div className="border border-gray-600 rounded-lg overflow-hidden shadow-2xl">
                   <canvas 
                     ref={canvasRef}
                     width={800}
@@ -616,14 +610,14 @@ export default function Editor() {
               </div>
               
               {!uploadedImage && (
-                <div className="mt-4 text-center text-gray-500">
-                  <p>Upload an image to start editing or add text directly to the canvas</p>
+                <div className="mt-4 text-center text-gray-400">
+                  <p>Upload a meme template or image to start creating memes, or add text directly to the canvas</p>
                 </div>
               )}
 
               {selectedTextId && (
-                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-700 flex items-center">
+                <div className="mt-4 p-4 bg-cyan-500/20 rounded-lg border border-cyan-500/30">
+                  <p className="text-sm text-cyan-300 flex items-center">
                     <Move className="h-4 w-4 mr-2" />
                     Text selected. Click and drag to move, or use the controls to edit.
                   </p>
