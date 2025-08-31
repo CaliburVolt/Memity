@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ImageIcon, Palette, Download, Sparkles, Star, Menu, X } from "lucide-react";
 
 export default function Home() {
@@ -105,11 +106,14 @@ export default function Home() {
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20">
               <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
                 {!imageError ? (
-                  <img 
+                  <Image 
                     src="/Drake_Hotline_Bling_Meme_Template_V1.jpg" 
                     alt="Drake meme template - example of what you can create with Memity"
+                    width={800}
+                    height={600}
                     className="w-full h-full object-contain"
                     onError={() => setImageError(true)}
+                    priority
                   />
                 ) : (
                   <div className="text-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { TextElement, TextSettings } from "@/types/editor";
@@ -8,7 +8,6 @@ import {
   Upload, 
   Type, 
   Download, 
-  Home, 
   Palette,
   Bold,
   Italic,
@@ -21,7 +20,7 @@ import {
   Star
 } from "lucide-react";
 
-export default function Editor() {
+function EditorContent() {
   const searchParams = useSearchParams();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null); // Cache the image
@@ -657,5 +656,17 @@ export default function Editor() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Editor() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading editor...</div>
+      </div>
+    }>
+      <EditorContent />
+    </Suspense>
   );
 }

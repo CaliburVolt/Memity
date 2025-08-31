@@ -195,6 +195,7 @@ export default function TemplatesPage() {
               onClick={() => handleTemplateClick(template)}
             >
               <div className={viewMode === "list" ? "flex-shrink-0 w-32 h-24" : "aspect-square"}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={template.image}
                   alt={template.name}
