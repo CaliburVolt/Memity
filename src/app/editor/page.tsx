@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { TextElement, TextSettings } from "@/types/editor";
 import { 
@@ -21,7 +21,7 @@ import {
 
 export default function Editor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null); // Cache the image
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
@@ -39,56 +39,27 @@ export default function Editor() {
     alignment: "left" as "left" | "center" | "right"
   });
 
+  // Automatically update selected text when settings change
   useEffect(() => {
-    redrawCanvas();
-  }, [textElements, uploadedImage, imageLoaded]);
-
-  const redrawCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Set background
-    ctx.fillStyle = "#f8fafc";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw uploaded image if exists
-    if (uploadedImage && imageLoaded) {
-      const img = new Image();
-      img.onload = () => {
-        // Calculate scaling to fit canvas
-        const canvasAspectRatio = canvas.width / canvas.height;
-        const imgAspectRatio = img.width / img.height;
-        
-        let drawWidth, drawHeight, offsetX, offsetY;
-        
-        if (imgAspectRatio > canvasAspectRatio) {
-          drawWidth = canvas.width;
-          drawHeight = canvas.width / imgAspectRatio;
-          offsetX = 0;
-          offsetY = (canvas.height - drawHeight) / 2;
-        } else {
-          drawWidth = canvas.height * imgAspectRatio;
-          drawHeight = canvas.height;
-          offsetX = (canvas.width - drawWidth) / 2;
-          offsetY = 0;
-        }
-        
-        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-        drawTextElements(ctx);
-      };
-      img.src = uploadedImage;
-    } else {
-      drawTextElements(ctx);
+    if (selectedTextId) {
+      setTextElements(prev => prev.map(el => 
+        el.id === selectedTextId 
+          ? {
+              ...el,
+              text: textSettings.text,
+              fontSize: textSettings.fontSize,
+              fontFamily: textSettings.fontFamily,
+              color: textSettings.color,
+              bold: textSettings.bold,
+              italic: textSettings.italic,
+              alignment: textSettings.alignment
+            }
+          : el
+      ));
     }
-  };
+  }, [textSettings, selectedTextId]);
 
-  const drawTextElements = (ctx: CanvasRenderingContext2D) => {
+  const drawTextElements = useCallback((ctx: CanvasRenderingContext2D) => {
     textElements.forEach((element) => {
       ctx.font = `${element.italic ? "italic" : ""} ${element.bold ? "bold" : ""} ${element.fontSize}px ${element.fontFamily}`.trim();
       ctx.fillStyle = element.color;
@@ -117,7 +88,54 @@ export default function Editor() {
         ctx.setLineDash([]);
       }
     });
-  };
+  }, [textElements]);
+
+  const redrawCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Set background
+    ctx.fillStyle = "#f8fafc";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw uploaded image if exists (using cached image)
+    if (uploadedImage && imageLoaded && imageRef.current) {
+      const img = imageRef.current;
+      
+      // Calculate scaling to fit canvas
+      const canvasAspectRatio = canvas.width / canvas.height;
+      const imgAspectRatio = img.width / img.height;
+      
+      let drawWidth, drawHeight, offsetX, offsetY;
+      
+      if (imgAspectRatio > canvasAspectRatio) {
+        drawWidth = canvas.width;
+        drawHeight = canvas.width / imgAspectRatio;
+        offsetX = 0;
+        offsetY = (canvas.height - drawHeight) / 2;
+      } else {
+        drawWidth = canvas.height * imgAspectRatio;
+        drawHeight = canvas.height;
+        offsetX = (canvas.width - drawWidth) / 2;
+        offsetY = 0;
+      }
+      
+      ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+    }
+    
+    // Always draw text elements
+    drawTextElements(ctx);
+  }, [uploadedImage, imageLoaded, drawTextElements]);
+
+  useEffect(() => {
+    redrawCanvas();
+  }, [redrawCanvas]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -128,9 +146,10 @@ export default function Editor() {
         setUploadedImage(imgUrl);
         setImageLoaded(false);
         
-        // Preload image to get dimensions
+        // Cache the image for better performance
         const img = new Image();
         img.onload = () => {
+          imageRef.current = img; // Cache the loaded image
           setImageLoaded(true);
         };
         img.src = imgUrl;
@@ -158,24 +177,6 @@ export default function Editor() {
     setSelectedTextId(newText.id);
   };
 
-  const updateSelectedText = () => {
-    if (selectedTextId) {
-      setTextElements(prev => prev.map(el => 
-        el.id === selectedTextId 
-          ? {
-              ...el,
-              fontSize: textSettings.fontSize,
-              fontFamily: textSettings.fontFamily,
-              color: textSettings.color,
-              bold: textSettings.bold,
-              italic: textSettings.italic,
-              alignment: textSettings.alignment
-            }
-          : el
-      ));
-    }
-  };
-
   const deleteSelected = () => {
     if (selectedTextId) {
       setTextElements(prev => prev.filter(el => el.id !== selectedTextId));
@@ -188,6 +189,7 @@ export default function Editor() {
     setImageLoaded(false);
     setTextElements([]);
     setSelectedTextId(null);
+    imageRef.current = null; // Clear cached image
   };
 
   const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
@@ -304,54 +306,51 @@ export default function Editor() {
     exportCtx.fillStyle = uploadedImage ? "transparent" : "#f8fafc";
     exportCtx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw image if exists
-    if (uploadedImage && imageLoaded) {
-      const img = new Image();
-      img.onload = () => {
-        const canvasAspectRatio = canvas.width / canvas.height;
-        const imgAspectRatio = img.width / img.height;
+    // Draw image if exists (using cached image)
+    if (uploadedImage && imageLoaded && imageRef.current) {
+      const img = imageRef.current;
+      const canvasAspectRatio = canvas.width / canvas.height;
+      const imgAspectRatio = img.width / img.height;
+      
+      let drawWidth, drawHeight, offsetX, offsetY;
+      
+      if (imgAspectRatio > canvasAspectRatio) {
+        drawWidth = canvas.width;
+        drawHeight = canvas.width / imgAspectRatio;
+        offsetX = 0;
+        offsetY = (canvas.height - drawHeight) / 2;
+      } else {
+        drawWidth = canvas.height * imgAspectRatio;
+        drawHeight = canvas.height;
+        offsetX = (canvas.width - drawWidth) / 2;
+        offsetY = 0;
+      }
+      
+      exportCtx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+      
+      // Draw text elements (without selection borders)
+      textElements.forEach((element) => {
+        exportCtx.font = `${element.italic ? "italic" : ""} ${element.bold ? "bold" : ""} ${element.fontSize}px ${element.fontFamily}`.trim();
+        exportCtx.fillStyle = element.color;
+        exportCtx.textAlign = element.alignment;
         
-        let drawWidth, drawHeight, offsetX, offsetY;
-        
-        if (imgAspectRatio > canvasAspectRatio) {
-          drawWidth = canvas.width;
-          drawHeight = canvas.width / imgAspectRatio;
-          offsetX = 0;
-          offsetY = (canvas.height - drawHeight) / 2;
-        } else {
-          drawWidth = canvas.height * imgAspectRatio;
-          drawHeight = canvas.height;
-          offsetX = (canvas.width - drawWidth) / 2;
-          offsetY = 0;
-        }
-        
-        exportCtx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-        
-        // Draw text elements (without selection borders)
-        textElements.forEach((element) => {
-          exportCtx.font = `${element.italic ? "italic" : ""} ${element.bold ? "bold" : ""} ${element.fontSize}px ${element.fontFamily}`.trim();
-          exportCtx.fillStyle = element.color;
-          exportCtx.textAlign = element.alignment;
-          
-          const lines = element.text.split("\n");
-          lines.forEach((line, index) => {
-            exportCtx.fillText(line, element.x, element.y + (index * element.fontSize * 1.2));
-          });
+        const lines = element.text.split("\n");
+        lines.forEach((line, index) => {
+          exportCtx.fillText(line, element.x, element.y + (index * element.fontSize * 1.2));
         });
-        
-        // Download
-        exportCanvas.toBlob((blob) => {
-          if (blob) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "edited-image.png";
-            a.click();
-            URL.revokeObjectURL(url);
-          }
-        }, "image/png");
-      };
-      img.src = uploadedImage;
+      });
+      
+      // Download immediately
+      exportCanvas.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "edited-image.png";
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      }, "image/png");
     } else {
       // Draw text elements only
       textElements.forEach((element) => {
@@ -450,6 +449,21 @@ export default function Editor() {
                 Text Settings
               </h3>
               
+              {selectedTextId && (
+                <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <p className="text-sm text-green-700 flex items-center">
+                    <Move className="h-4 w-4 mr-2" />
+                    Text selected! Changes apply automatically as you edit.
+                  </p>
+                </div>
+              )}
+              
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-700">
+                  ✨ <strong>Auto-Update:</strong> Changes apply instantly to selected text. No need to click update!
+                </p>
+              </div>
+              
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -541,10 +555,10 @@ export default function Editor() {
                     Alignment
                   </label>
                   <div className="flex space-x-1">
-                    {["left", "center", "right"].map((align) => (
+                    {(["left", "center", "right"] as const).map((align) => (
                       <button
                         key={align}
-                        onClick={() => setTextSettings({...textSettings, alignment: align as any})}
+                        onClick={() => setTextSettings({...textSettings, alignment: align})}
                         className={`flex-1 flex items-center justify-center px-3 py-2 rounded-md border transition-colors ${
                           textSettings.alignment === align
                             ? "bg-blue-100 border-blue-300 text-blue-700"
@@ -559,20 +573,12 @@ export default function Editor() {
                   </div>
                 </div>
 
-                <div className="flex space-x-2">
-                  <button
-                    onClick={addText}
-                    className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
-                  >
-                    Add Text
-                  </button>
-                  <button
-                    onClick={updateSelectedText}
-                    className="flex-1 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-                  >
-                    Update
-                  </button>
-                </div>
+                <button
+                  onClick={addText}
+                  className="w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors mb-4"
+                >
+                  Add Text
+                </button>
 
                 <button
                   onClick={deleteSelected}
