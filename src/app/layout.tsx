@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Memity - Meme Editor | Create Viral Memes Online",
-  description: "Create hilarious memes instantly with Memity! Upload images, add funny text, and share viral content. Free online meme generator and editor.",
+  description: "Create hilarious memes instantly with Memity! Professional drag-and-drop meme editor with templates, custom text styling, and high-quality downloads. Make viral content in minutes.",
 };
 
 export default function RootLayout({

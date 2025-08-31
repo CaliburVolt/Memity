@@ -1,7 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { ImageIcon, Palette, Download, Sparkles } from "lucide-react";
+import { ImageIcon, Palette, Download, Sparkles, Star, Menu, X } from "lucide-react";
 
 export default function Home() {
+  const [imageError, setImageError] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
@@ -11,14 +16,58 @@ export default function Home() {
             <Palette className="h-8 w-8 text-cyan-400" />
             <h1 className="text-2xl font-bold text-white">Memity</h1>
           </div>
+          
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link href="#features" className="text-gray-300 hover:text-white transition-colors">Features</Link>
             <Link href="#how-it-works" className="text-gray-300 hover:text-white transition-colors">How it Works</Link>
+            <Link href="/templates" className="text-gray-300 hover:text-white transition-colors">Templates</Link>
+            <a 
+              href="https://github.com/CaliburVolt/Memity" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-purple-500/25 transition-all duration-200 transform hover:scale-105"
+            >
+              <Star className="h-4 w-4 text-yellow-300 hover:text-yellow-200 transition-colors" />
+              <span>Star on GitHub</span>
+            </a>
             <Link href="/editor" className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg">
               Get Started
             </Link>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-black/30 backdrop-blur-md border-t border-white/10">
+            <nav className="px-6 py-4 space-y-4">
+              <Link href="#features" className="block text-gray-300 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>Features</Link>
+              <Link href="#how-it-works" className="block text-gray-300 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>How it Works</Link>
+              <Link href="/templates" className="block text-gray-300 hover:text-white transition-colors" onClick={() => setMobileMenuOpen(false)}>Templates</Link>
+              <a 
+                href="https://github.com/CaliburVolt/Memity" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 text-white px-4 py-3 rounded-lg shadow-lg hover:shadow-purple-500/25 transition-all duration-200"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Star className="h-4 w-4 text-yellow-300 hover:text-yellow-200 transition-colors" />
+                <span>Star on GitHub</span>
+              </a>
+              <Link href="/editor" className="block bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg text-center" onClick={() => setMobileMenuOpen(false)}>
+                Get Started
+              </Link>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
@@ -54,11 +103,20 @@ export default function Home() {
           {/* Demo Preview */}
           <div className="relative max-w-4xl mx-auto">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-white/20">
-              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-300 text-lg">Your hilarious memes will look amazing here</p>
-                </div>
+              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg flex items-center justify-center overflow-hidden">
+                {!imageError ? (
+                  <img 
+                    src="/Drake_Hotline_Bling_Meme_Template_V1.jpg" 
+                    alt="Drake meme template - example of what you can create with Memity"
+                    className="w-full h-full object-contain"
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <div className="text-center">
+                    <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-300 text-lg">Your hilarious memes will look amazing here</p>
+                  </div>
+                )}
               </div>
             </div>
             <div className="absolute -top-4 -right-4 w-8 h-8 bg-cyan-500 rounded-full animate-pulse"></div>
@@ -148,7 +206,7 @@ export default function Home() {
             <Palette className="h-6 w-6 text-cyan-400" />
             <span className="text-lg font-semibold">Memity</span>
           </div>
-          <p className="text-gray-400">© 2025 ImageCraft. All rights reserved.</p>
+          <p className="text-gray-400">© 2025 Memity. All rights reserved.</p>
         </div>
       </footer>
     </div>
