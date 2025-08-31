@@ -20,6 +20,21 @@ import {
   Star
 } from "lucide-react";
 
+export default function Editor() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white text-lg">Loading Meme Editor...</p>
+        </div>
+      </div>
+    }>
+      <EditorContent />
+    </Suspense>
+  );
+}
+
 function EditorContent() {
   const searchParams = useSearchParams();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -404,13 +419,30 @@ function EditorContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden selection:bg-cyan-400/30">
+      {/* Floating Particles Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400/30 rounded-full animate-bounce" style={{animationDelay: '0s', animationDuration: '3s'}}></div>
+        <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-purple-400/40 rounded-full animate-bounce" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-pink-400/20 rounded-full animate-bounce" style={{animationDelay: '2s', animationDuration: '5s'}}></div>
+        <div className="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-emerald-400/25 rounded-full animate-bounce" style={{animationDelay: '0.5s', animationDuration: '3.5s'}}></div>
+        <div className="absolute bottom-1/3 left-1/6 w-2.5 h-2.5 bg-blue-400/20 rounded-full animate-bounce" style={{animationDelay: '1.5s', animationDuration: '4.5s'}}></div>
+      </div>
+
       {/* Header */}
-      <header className="bg-black/30 backdrop-blur-md border-b border-white/10 px-6 py-4">
+      <header className="fixed top-0 left-0 right-0 bg-black/50 backdrop-blur-xl border-b border-white/20 px-6 py-4 z-50 shadow-lg shadow-black/20">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2 text-cyan-400 hover:text-cyan-300 transition-colors">
-            <Palette className="h-8 w-8 text-cyan-400" />
-            <h1 className="text-2xl font-bold text-white">Memity - Meme Editor</h1>
+          <Link href="/" className="group flex items-center space-x-3 text-cyan-400 hover:text-cyan-300 transition-all duration-300">
+            <div className="relative">
+              <Palette className="h-10 w-10 text-cyan-400 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
+              <div className="absolute inset-0 h-10 w-10 text-cyan-400 opacity-0 group-hover:opacity-30 animate-ping">
+                <Palette className="h-10 w-10" />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Memity</h1>
+              <span className="text-xs text-gray-400">Meme Editor</span>
+            </div>
           </Link>
           
           <div className="flex items-center space-x-4">
@@ -418,38 +450,44 @@ function EditorContent() {
               href="https://github.com/CaliburVolt/Memity" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center space-x-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-white px-4 py-2 rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-200 backdrop-blur-sm"
+              className="group flex items-center space-x-2 bg-gradient-to-r from-purple-600/80 to-purple-700/80 hover:from-purple-500 hover:to-purple-600 text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-purple-500/30"
             >
-              <Star className="h-4 w-4 hover:text-yellow-400 transition-colors" />
-              <span className="hidden sm:inline">Star on GitHub</span>
+              <Star className="h-4 w-4 text-yellow-300 group-hover:text-yellow-200 group-hover:animate-pulse transition-all" />
+              <span className="hidden sm:inline font-medium">Star on GitHub</span>
             </a>
             <button
               onClick={clearCanvas}
-              className="flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              className="group flex items-center space-x-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl border border-white/20 hover:border-white/40 transition-all duration-300"
             >
-              <RotateCcw className="h-4 w-4" />
+              <RotateCcw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-300" />
               <span className="hidden sm:inline">Clear</span>
             </button>
             <button
               onClick={downloadImage}
               disabled={!uploadedImage}
-              className="flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-cyan-600 hover:to-blue-600 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed transition-all"
+              className="group flex items-center space-x-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-xl hover:from-cyan-600 hover:to-blue-600 disabled:from-gray-600/50 disabled:to-gray-700/50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 disabled:transform-none shadow-lg hover:shadow-cyan-500/30 border border-cyan-400/30"
             >
-              <Download className="h-4 w-4" />
-              Download
+              <Download className="h-4 w-4 group-hover:animate-bounce" />
+              <span className="font-medium">Download</span>
             </button>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="relative z-10 pt-24 max-w-full mx-auto">
+        <div className="flex flex-col xl:flex-row gap-6 min-h-screen">
           {/* Sidebar Controls */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="xl:w-80 xl:min-w-80 px-6">
+            <div className="space-y-6 xl:sticky xl:top-24 xl:max-h-[calc(100vh-6rem)] xl:overflow-y-auto scrollbar-hide hover:scrollbar-show transition-all duration-300 pr-2">
             {/* Upload Section */}
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
-              <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
-                <Upload className="h-5 w-5 mr-2 text-cyan-400" />
+            <div className="group bg-black/50 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/20 hover:border-cyan-400/40 transition-all duration-500 hover:shadow-cyan-500/10">
+              <h3 className="text-xl font-bold mb-6 flex items-center text-white">
+                <div className="relative mr-3">
+                  <Upload className="h-6 w-6 text-cyan-400" />
+                  <div className="absolute inset-0 h-6 w-6 text-cyan-400 opacity-0 hover:opacity-30 animate-ping">
+                    <Upload className="h-6 w-6" />
+                  </div>
+                </div>
                 Upload Image
               </h3>
               <div className="space-y-4">
@@ -460,53 +498,62 @@ function EditorContent() {
                     onChange={handleImageUpload}
                     className="hidden"
                   />
-                  <div className="border-2 border-dashed border-cyan-400/30 rounded-lg p-8 text-center cursor-pointer hover:border-cyan-400/60 hover:bg-cyan-400/5 transition-colors">
-                    <Upload className="h-8 w-8 text-cyan-400 mx-auto mb-2" />
-                    <p className="text-sm text-gray-300">
+                  <div className="group border-2 border-dashed border-cyan-400/30 rounded-lg p-4 text-center cursor-pointer hover:border-cyan-400/60 hover:bg-cyan-400/5 transition-all duration-300 transform hover:scale-105">
+                    <Upload className="h-6 w-6 text-cyan-400 mx-auto mb-2 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300" />
+                    <p className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
                       Click to upload or drag and drop
                     </p>
+                    <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
                   </div>
                 </label>
               </div>
             </div>
 
             {/* Text Controls */}
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
-              <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
-                <Type className="h-5 w-5 mr-2 text-purple-400" />
+            <div className="group bg-black/50 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/20 hover:border-purple-400/40 transition-all duration-500 hover:shadow-purple-500/10">
+              <h3 className="text-xl font-bold mb-6 flex items-center text-white">
+                <div className="relative mr-3">
+                  <Type className="h-6 w-6 text-purple-400" />
+                  <div className="absolute inset-0 h-6 w-6 text-purple-400 opacity-0 hover:opacity-30 animate-ping">
+                    <Type className="h-6 w-6" />
+                  </div>
+                </div>
                 Text Settings
               </h3>
               
               {selectedTextId && (
-                <div className="mb-4 p-3 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
-                  <p className="text-sm text-emerald-300 flex items-center">
-                    <Move className="h-4 w-4 mr-2" />
+                <div className="mb-6 p-4 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 rounded-xl border border-emerald-500/30 backdrop-blur-sm">
+                  <p className="text-sm text-emerald-300 flex items-center font-medium">
+                    <Move className="h-4 w-4 mr-2 animate-pulse" />
                     Text selected! Changes apply automatically as you edit.
                   </p>
                 </div>
               )}
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-bold text-gray-300 mb-3 flex items-center">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full mr-2"></div>
                     Text Content
                   </label>
                   <input
                     type="text"
                     value={textSettings.text}
                     onChange={(e) => setTextSettings({...textSettings, text: e.target.value})}
-                    className="w-full px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 text-white placeholder-gray-400"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300 hover:bg-gray-700/70 focus:bg-gray-700/80 focus:shadow-lg focus:shadow-cyan-500/20"
+                    placeholder="Enter your meme text..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-bold text-gray-300 mb-3 flex items-center">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
                     Font Family
                   </label>
                   <select
                     value={textSettings.fontFamily}
                     onChange={(e) => setTextSettings({...textSettings, fontFamily: e.target.value})}
-                    className="w-full px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 text-white"
+                    className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-white transition-all duration-300 hover:bg-gray-700/70 cursor-pointer"
                   >
                     <option value="Arial">Arial</option>
                     <option value="Helvetica">Helvetica</option>
@@ -611,17 +658,27 @@ function EditorContent() {
                 </button>
               </div>
             </div>
+            </div>
           </div>
 
           {/* Canvas Area */}
-          <div className="lg:col-span-3">
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-white/10">
-              <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
-                <Move className="h-5 w-5 mr-2 text-emerald-400" />
-                Canvas
+          <div className="flex-1 px-6 pb-6">
+            <div className="bg-black/50 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/30 hover:border-cyan-400/50 transition-all duration-500 h-full group">
+              <h3 className="text-2xl font-bold mb-8 flex items-center justify-center text-white">
+                <div className="relative mr-3">
+                  <Move className="h-6 w-6 text-emerald-400 group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute inset-0 h-6 w-6 text-emerald-400 opacity-0 group-hover:opacity-30 animate-ping">
+                    <Move className="h-6 w-6" />
+                  </div>
+                </div>
+                <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">Meme Canvas</span>
+                <div className="ml-auto flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">Ready to edit</span>
+                </div>
               </h3>
-              <div className="flex justify-center">
-                <div className="border border-gray-600 rounded-lg overflow-hidden shadow-2xl">
+              <div className="flex justify-center items-center min-h-[600px] group/canvas">
+                <div className="relative border-2 border-cyan-500/20 hover:border-cyan-500/40 rounded-2xl overflow-hidden shadow-2xl hover:shadow-cyan-500/20 transition-all duration-500 bg-gradient-to-br from-gray-900/60 to-gray-800/60 backdrop-blur-sm group-hover/canvas:scale-[1.01]">
                   <canvas 
                     ref={canvasRef}
                     width={800}
@@ -631,20 +688,31 @@ function EditorContent() {
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
-                    className="cursor-crosshair"
-                    style={{ maxWidth: "100%", height: "auto" }}
+                    className="cursor-crosshair transition-all duration-300 max-w-full h-auto rounded-xl"
+                    style={{ maxWidth: "800px", height: "auto" }}
                   />
+                  
+                  {!uploadedImage && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-900/90 backdrop-blur-sm rounded-xl">
+                      <div className="text-center p-8 group/empty">
+                        <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center group-hover/empty:scale-110 transition-transform duration-300">
+                          <Upload className="h-12 w-12 text-cyan-400 animate-bounce group-hover/empty:animate-pulse" />
+                        </div>
+                        <h4 className="text-2xl font-bold text-white mb-3 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Upload an image to start</h4>
+                        <p className="text-gray-400 text-lg">Choose from templates or upload your own image</p>
+                        <div className="mt-4 flex justify-center space-x-2">
+                          <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                          <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                          <div className="w-2 h-2 bg-pink-400 rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              
-              {!uploadedImage && (
-                <div className="mt-4 text-center text-gray-400">
-                  <p>Upload a meme template or image to start creating memes, or add text directly to the canvas</p>
-                </div>
-              )}
 
               {selectedTextId && (
-                <div className="mt-4 p-4 bg-cyan-500/20 rounded-lg border border-cyan-500/30">
+                <div className="mt-6 p-4 bg-cyan-500/20 rounded-lg border border-cyan-500/30">
                   <p className="text-sm text-cyan-300 flex items-center">
                     <Move className="h-4 w-4 mr-2" />
                     Text selected. Click and drag to move, or use the controls to edit.
@@ -656,17 +724,5 @@ function EditorContent() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function Editor() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading editor...</div>
-      </div>
-    }>
-      <EditorContent />
-    </Suspense>
   );
 }

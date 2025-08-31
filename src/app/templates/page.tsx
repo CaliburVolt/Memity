@@ -86,36 +86,49 @@ export default function TemplatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      {/* Floating Particles Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-cyan-400/30 rounded-full animate-bounce" style={{animationDelay: '0s', animationDuration: '3s'}}></div>
+        <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-purple-400/40 rounded-full animate-bounce" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-pink-400/20 rounded-full animate-bounce" style={{animationDelay: '2s', animationDuration: '5s'}}></div>
+      </div>
+
       {/* Header */}
-      <header className="bg-black/30 backdrop-blur-md border-b border-white/10 px-6 py-4">
+      <header className="fixed top-0 left-0 right-0 bg-black/40 backdrop-blur-xl border-b border-white/20 px-6 py-4 z-50">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-6">
             <Link 
               href="/"
-              className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+              className="group flex items-center space-x-2 text-gray-300 hover:text-white transition-all duration-300 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl border border-white/20 hover:border-white/40"
             >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Back to Home</span>
+              <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform duration-300" />
+              <span className="font-medium">Back to Home</span>
             </Link>
-            <div className="h-6 w-px bg-gray-600"></div>
-            <h1 className="text-2xl font-bold text-white">Meme Templates</h1>
+            <div className="h-8 w-px bg-gradient-to-b from-transparent via-gray-600 to-transparent"></div>
+            <div className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Meme Templates</h1>
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <a 
               href="https://github.com/CaliburVolt/Memity" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center space-x-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-white px-4 py-2 rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-200 backdrop-blur-sm"
+              className="group flex items-center space-x-2 bg-gradient-to-r from-purple-600/80 to-purple-700/80 hover:from-purple-500 hover:to-purple-600 text-white px-4 py-2 rounded-xl shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border border-purple-500/30"
             >
-              <Star className="h-4 w-4 hover:text-yellow-400 transition-colors" />
-              <span className="hidden sm:inline">Star on GitHub</span>
+              <Star className="h-4 w-4 text-yellow-300 group-hover:text-yellow-200 group-hover:animate-pulse transition-all" />
+              <span className="hidden sm:inline font-medium">Star on GitHub</span>
             </a>
             <Link 
               href="/editor"
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-2 rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all shadow-lg"
+              className="group bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-2 rounded-xl hover:from-cyan-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/30 border border-cyan-400/30"
             >
-              Create Custom Meme
+              <span className="flex items-center gap-2 font-semibold">
+                <Edit className="h-4 w-4 group-hover:animate-bounce" />
+                Create Custom Meme
+              </span>
             </Link>
           </div>
         </div>
